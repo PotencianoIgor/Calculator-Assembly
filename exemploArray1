@@ -1,0 +1,50 @@
+
+.data
+hdr: .ascii "Valores do Array:"
+       .asciiz "\n"
+spaces: .asciiz " "
+newLine: .asciiz "\n"
+array: .word 11, 13, 15, 17, 19
+	  .word 21, 23, 25, 27, 29
+	  .word 31, 33, 35, 37, 39
+	  .word 41, 43, 45, 47
+length: .word 19
+
+.text
+.globl main
+main:
+
+li $v0, 4 
+la $a0, hdr
+syscall
+
+la $s0, array
+li $s1, 0
+lw $s2, length
+
+printLoop:
+
+li $v0, 1 
+lw $a0, ($s0) # obter array[i]
+syscall 
+
+li $v0, 4 #Escrever espaços
+la $a0, spaces
+syscall
+
+addu $s0, $s0, 4 # Atualizar endereço (word = 4 bytes)
+add $s1, $s1, 1 # incrementar contador
+rem $t0, $s1, 5 #A cada cinco elementos impressos escrever um quebra de linha
+bnez $t0, skipNewLine
+
+li $v0, 4 # Escrever quebra de linha
+la $a0, newLine
+syscall
+
+skipNewLine:
+
+bne $s1, $s2, printLoop 
+
+li $v0, 10 # Finalizar programa
+syscall 
+.end main
